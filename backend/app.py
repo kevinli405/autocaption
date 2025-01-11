@@ -6,11 +6,17 @@ import subprocess
 app = Flask(__name__)
 CORS(app)
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static/uploads')
+PROCESSED_FOLDER = os.path.join(BASE_DIR, 'static/processed')
+
+"""
 # Temporary storage paths
 UPLOAD_FOLDER = './static/uploads'
 PROCESSED_FOLDER = './static/processed'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(PROCESSED_FOLDER, exist_ok=True)
+"""
 
 # Endpoint to upload video
 @app.route('/upload', methods=['POST'])
@@ -34,11 +40,13 @@ def save_subtitles():
 def download_file(filename):
     return send_from_directory(PROCESSED_FOLDER, filename)
 
+#'/Windows/Fonts/arial.ttf'
+
 # Function to render video with subtitles using FFmpeg
 def render_video(input_path, subtitles):
     output_path = os.path.join(PROCESSED_FOLDER, "output.mp4")
     drawtext_commands = ",".join([
-        f"drawtext=text='{s['text']}':x={s['x']}:y={s['y']}:fontsize={s['size']}:fontcolor={s['color']}:enable='between(t,{s['start']},{s['end']})':fontfile='/Windows/Fonts/arial.ttf'"
+        f"drawtext=text='{s['text']}':x={s['x']}:y={s['y']}:fontsize={s['size']}:fontcolor={s['color']}:enable='between(t,{s['start']},{s['end']})':fontfile={os.path.join(BASE_DIR, 'fonts/Arial.ttf')}"
         for s in subtitles
     ])
     print(input_path)
@@ -49,4 +57,6 @@ def render_video(input_path, subtitles):
     return output_path
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    #app.run(debug=True)
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=8080)

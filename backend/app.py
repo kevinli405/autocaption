@@ -1,62 +1,48 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, send_file
 from flask_cors import CORS
-import os
 import subprocess
+import tempfile
+import json
 
 app = Flask(__name__)
 CORS(app)
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static/uploads')
-PROCESSED_FOLDER = os.path.join(BASE_DIR, 'static/processed')
-
-"""
-# Temporary storage paths
-UPLOAD_FOLDER = './static/uploads'
-PROCESSED_FOLDER = './static/processed'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(PROCESSED_FOLDER, exist_ok=True)
-"""
-
-# Endpoint to upload video
-@app.route('/upload', methods=['POST'])
-def upload_video():
-    file = request.files['file']
-    file_path = os.path.join(UPLOAD_FOLDER, file.filename)
-    print(file_path)
-    file.save(file_path)
-    return jsonify({"message": "Video uploaded successfully!", "path": file_path})
-
-# Endpoint to save subtitle data
+# Endpoint to upload video and save subtitle data
 @app.route('/save_subtitles', methods=['POST'])
 def save_subtitles():
-    subtitles = request.json['subtitles']
-    video_path = request.json['videoPath']
-    output_path = render_video(video_path, subtitles)
-    return jsonify({"message": "Video processed successfully!", "outputPath": output_path})
+    # Get the video file from the request
+    file = request.files['file']
+    subtitles = request.form.get('subtitles')
+    subtitles = json.loads(subtitles)
 
-# Serve the processed video
-@app.route('/download/<filename>', methods=['GET'])
-def download_file(filename):
-    return send_from_directory(PROCESSED_FOLDER, filename)
+    # Save the file to a temporary directory
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.mp4') as temp_input_file:
+        file.save(temp_input_file.name)
 
-#'/Windows/Fonts/arial.ttf'
+        # Process the video with subtitles
+        output_path = render_video(temp_input_file.name, subtitles)
+
+    # Send the processed video back to the client
+    return send_file(output_path, as_attachment=True, download_name="output.mp4")
 
 # Function to render video with subtitles using FFmpeg
 def render_video(input_path, subtitles):
-    output_path = os.path.join(PROCESSED_FOLDER, "output.mp4")
-    drawtext_commands = ",".join([
-        f"drawtext=text='{s['text']}':x={s['x']}:y={s['y']}:fontsize={s['size']}:fontcolor={s['color']}:enable='between(t,{s['start']},{s['end']})':fontfile={os.path.join(BASE_DIR, 'fonts/Arial.ttf')}"
-        for s in subtitles
-    ])
-    print(input_path)
-    command = [
-        "ffmpeg", "-i", input_path, "-vf", drawtext_commands, output_path
-    ]
-    subprocess.run(command)
-    return output_path
+
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.mp4') as temp_output_file:
+        drawtext_commands = ",".join([
+            f"drawtext=text='{s['text']}':x={s['x']}:y={s['y']}:fontsize={s['size']}:fontcolor={s['color']}:enable='between(t,{s['start']},{s['end']})':fontfile=fonts/Arial.ttf"
+            for s in subtitles
+        ])
+
+        # Run the FFmpeg command
+        command = [
+            "ffmpeg", "-y", "-i", input_path, "-vf", drawtext_commands, temp_output_file.name
+        ]
+        subprocess.run(command)
+
+        return temp_output_file.name
 
 if __name__ == "__main__":
-    #app.run(debug=True)
-    from waitress import serve
-    serve(app, host="0.0.0.0", port=8080)
+    app.run(debug=True)
+    #from waitress import serve
+    #serve(app, host="0.0.0.0", port=8080)

@@ -7,13 +7,17 @@ import SubtitleEditor from "./components/SubtitleEditor";
 import SubtitleControls from "./components/SubtitleControls";
 import axios from "axios";
 
+//http://127.0.0.1:5000
+
 const App = () => {
-  const [videoPath, setVideoPath] = useState(null); 
+  const [videoFile, setVideoFile] = useState(null);
+  const [videoFileName, setVideoFileName] = useState("");
   const [subtitles, setSubtitles] = useState([]);
   const [selectedSubtitleIndex, setSelectedSubtitleIndex] = useState(null);
   const [videoDimensions, setVideoDimensions] = useState({ width: 0, height: 0 });
   const [originalDimensions, setOriginalDimensions] = useState({ width: 0, height: 0 });
   const [currentTime, setCurrentTime] = useState(0);
+  const [processedVideoFile, setProcessedVideoFile] = useState(null);
 
   const handleSubtitleClick = (index) => {
     setSelectedSubtitleIndex(index);
@@ -28,16 +32,22 @@ const App = () => {
 
   // Handle Save Subtitles - Post request to save subtitles
   const handleSaveSubtitles = async () => {
-    if (!videoPath || subtitles.length === 0) return;
+    if (!videoFile || subtitles.length === 0) return;
+
+    const formData = new FormData();
+    formData.append("file", videoFile);
+    formData.append("subtitles", JSON.stringify(subtitles));
 
     try {
-      const response = await axios.post("http://127.0.0.1:5000/save_subtitles", {
-        videoPath,   // Video path to process
-        subtitles,   // Subtitles data to apply
+      const response = await axios.post(`http://127.0.0.1:5000/save_subtitles`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        responseType: "blob",
       });
-      const processedVideoPath = response.data.outputPath;
-      console.log("Processed video saved at:", processedVideoPath);
-      // Here, you could provide a link to download the processed video or show it to the user.
+  
+      const videoUrl = URL.createObjectURL(response.data);
+      setProcessedVideoFile(videoUrl);
     } catch (error) {
       console.error("Error processing subtitles:", error);
     }
@@ -48,10 +58,13 @@ const App = () => {
       <div>
         <h1 style={{ textAlign: "center" }}>Interactive Subtitle Editor</h1>
         <VideoUploader
-          onUpload={(file) => setVideoPath(file)}
           setVideoDimensions={setVideoDimensions}
           setCurrentTime={setCurrentTime}
           setOriginalDimensions={setOriginalDimensions}
+          setVideoFile={(file) => {
+            setVideoFile(file); 
+            setVideoFileName(file.name);
+          }}
         />
         <SubtitleEditor
           subtitles={subtitles}
@@ -69,6 +82,14 @@ const App = () => {
         />
       </div>
       <button onClick={handleSaveSubtitles}>Save Subtitles</button>
+      {/* Conditional rendering of download button if processed video is available */}
+      {processedVideoFile && (
+        <div>
+          <a href={processedVideoFile} download={`${videoFileName.split(".")[0]}_processed.mp4`}>
+            <button>Download Processed Video</button>
+          </a>
+        </div>
+      )}
     </div>
   );
 };

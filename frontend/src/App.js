@@ -39,7 +39,7 @@ const App = () => {
     formData.append("subtitles", JSON.stringify(subtitles));
 
     try {
-      const response = await axios.post(`http://127.0.0.1:5000/save_subtitles`, formData, {
+      const response = await axios.post(`https://autocaption-4up6.onrender.com/save_subtitles`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

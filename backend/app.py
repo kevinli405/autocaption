@@ -55,7 +55,6 @@ def render_video(input_path, subtitles):
 
         print(f"File path: {temp_output_file.name}", flush=True)
         print(f"File size: {os.path.getsize(temp_output_file.name)} bytes", flush=True)
-        temp_output_file.flush()
 
         return temp_output_file.name
 

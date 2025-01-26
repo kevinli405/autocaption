@@ -47,7 +47,7 @@ def render_video(input_path, subtitles):
 
         # Run the FFmpeg command
         command = [
-            "ffmpeg", "-y", "-i", input_path, "-vf", "drawtext=text='Test':x=10:y=10:fontsize=24:fontcolor=white", temp_output_file.name
+            "ffmpeg", "-y", "-i", input_path, "-vf", "drawtext=text='Test':x=10:y=10:fontsize=24:fontcolor=white", "-preset", "veryfast", temp_output_file.name
         ]
         #command = f"ffmpeg -i {input_path} -vf drawtext=text='Test':x=10:y=10:fontsize=24:fontcolor=white {temp_output_file.name}"
         subprocess.run(command)
@@ -60,4 +60,4 @@ def render_video(input_path, subtitles):
 if __name__ == "__main__":
     #app.run(debug=True)
     from waitress import serve
-    serve(app, host="0.0.0.0", port=8080, connection_limit=500, asyncore_use_select=True)
+    serve(app, host="0.0.0.0", port=8080)

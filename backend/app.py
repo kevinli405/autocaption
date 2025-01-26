@@ -60,4 +60,4 @@ def render_video(input_path, subtitles):
 if __name__ == "__main__":
     #app.run(debug=True)
     from waitress import serve
-    serve(app, host="0.0.0.0", port=8080)
+    serve(app, host="0.0.0.0", port=8080, connection_limit=500, asyncore_use_select=True)

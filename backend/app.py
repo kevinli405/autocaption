@@ -47,7 +47,7 @@ def render_video(input_path, subtitles):
 
         # Run the FFmpeg command
         command = [
-            "ffmpeg", "-y", "-i", input_path, "-vf", drawtext_commands, temp_output_file.name
+            "ffmpeg", "-y", "-i", input_path, "-vf", "drawtext=text='Test':x=10:y=10:fontsize=24:fontcolor=white", temp_output_file.name
         ]
         #command = f"ffmpeg -i {input_path} -vf drawtext=text='Test':x=10:y=10:fontsize=24:fontcolor=white {temp_output_file.name}"
         subprocess.run(command)

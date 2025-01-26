@@ -11,14 +11,11 @@ CORS(app)
 # Endpoint to upload video and save subtitle data
 @app.route('/save_subtitles', methods=['POST'])
 def save_subtitles():
-    print("aaaaaaaaaaaaaaaaa", flush=True)
     # Get the video file from the request
     file = request.files['file']
     subtitles = request.form.get('subtitles')
     subtitles = json.loads(subtitles)
 
-    if not file:
-        print("No file received!", flush=True)
     print(f"Received file: {file.filename}, size: {len(file.read())} bytes", flush=True)
 
     # Save the file to a temporary directory
@@ -27,7 +24,8 @@ def save_subtitles():
         print(f"File size: {os.path.getsize(temp_input_file.name)} bytes", flush=True)
         file.save(temp_input_file.name)
         print("bbbbbbbbbbbbbbbbbbbbbb", flush=True)
-
+        print(f"File path: {temp_input_file.name}", flush=True)
+        print(f"File size: {os.path.getsize(temp_input_file.name)} bytes", flush=True)
         # Process the video with subtitles
         output_path = render_video(temp_input_file.name, subtitles)
     
@@ -38,6 +36,9 @@ def save_subtitles():
 
 # Function to render video with subtitles using FFmpeg
 def render_video(input_path, subtitles):
+
+    print(f"File path: {input_path}", flush=True)
+    print(f"File size: {os.path.getsize(input_path)} bytes", flush=True)
 
     with tempfile.NamedTemporaryFile(delete=False, suffix='.mp4') as temp_output_file:
         drawtext_commands = ",".join([

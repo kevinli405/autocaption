@@ -8,6 +8,8 @@ import os
 app = Flask(__name__)
 CORS(app)
 
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
+
 # Endpoint to upload video and save subtitle data
 @app.route('/save_subtitles', methods=['POST'])
 def save_subtitles():
@@ -20,9 +22,14 @@ def save_subtitles():
 
     # Save the file to a temporary directory
     with tempfile.NamedTemporaryFile(delete=False, suffix='.mp4') as temp_input_file:
-        file.save(temp_input_file.name)
-        temp_input_file.flush()
-        print(f"File saved at {temp_input_file.name}, size: {os.path.getsize(temp_input_file.name)} bytes", flush=True)
+        try:
+            file.save(temp_input_file.name)
+            temp_input_file.flush()
+            print(f"File successfully saved at {temp_input_file.name}, size: {os.path.getsize(temp_input_file.name)} bytes", flush=True)
+        except Exception as e:
+            print(f"Error saving file: {e}", flush=True)
+            print(f"aaaaaaaaaaaaaaaaaaaaaaaa", flush=True)
+            return f"Error saving file: {e}", 500
         # Process the video with subtitles
         output_path = render_video(temp_input_file.name, subtitles)
     

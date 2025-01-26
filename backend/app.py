@@ -19,6 +19,8 @@ def save_subtitles():
 
     # Save the file to a temporary directory
     with tempfile.NamedTemporaryFile(delete=False, suffix='.mp4') as temp_input_file:
+        print(f"File path: {temp_input_file.name}", flush=True)
+        print(f"File size: {os.path.getsize(temp_input_file.name)} bytes", flush=True)
         file.save(temp_input_file.name)
         print("bbbbbbbbbbbbbbbbbbbbbb", flush=True)
 
@@ -32,6 +34,8 @@ def save_subtitles():
 
 # Function to render video with subtitles using FFmpeg
 def render_video(input_path, subtitles):
+    print(f"File path: {input_path}", flush=True)
+    print(f"File size: {input_path} bytes", flush=True)
 
     with tempfile.NamedTemporaryFile(delete=False, suffix='.mp4') as temp_output_file:
         drawtext_commands = ",".join([

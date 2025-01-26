@@ -19,20 +19,16 @@ def save_subtitles():
     print(f"Received file: {file.filename}, size: {len(file.read())} bytes", flush=True)
 
     # Save the file to a temporary directory
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.mp4') as temp_input_file:
-        print(f"File path: {temp_input_file.name}", flush=True)
-        print(f"File size: {os.path.getsize(temp_input_file.name)} bytes", flush=True)
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.mp4', dir='/tmp') as temp_input_file:
         file.save(temp_input_file.name)
-        print("bbbbbbbbbbbbbbbbbbbbbb", flush=True)
-        print(f"File path: {temp_input_file.name}", flush=True)
-        print(f"File size: {os.path.getsize(temp_input_file.name)} bytes", flush=True)
+        print(f"File saved at {temp_input_file.name}, size: {os.path.getsize(temp_input_file.name)} bytes", flush=True)
         # Process the video with subtitles
         output_path = render_video(temp_input_file.name, subtitles)
     
     print("dddddddddddddddddddddddddddddddddddddd", flush=True)
 
     # Send the processed video back to the client
-    return send_file(output_path, as_attachment=True, download_name="output.mp4", mimetype="video/mp4")
+    return send_file(output_path, as_attachment=True, download_name="output.mp4")
 
 # Function to render video with subtitles using FFmpeg
 def render_video(input_path, subtitles):

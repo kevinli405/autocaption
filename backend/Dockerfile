@@ -14,7 +14,7 @@ COPY . /app
 RUN pip install -r requirements.txt
 
 # Expose the port your Flask app runs on (default is 5000)
-EXPOSE 8080
+EXPOSE 5000
 
 # Set the default command to run your Flask app
 CMD ["python3", "app.py"]

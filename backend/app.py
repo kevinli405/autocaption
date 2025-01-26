@@ -20,14 +20,8 @@ def save_subtitles():
 
     # Save the file to a temporary directory
     with tempfile.NamedTemporaryFile(delete=False, suffix='.mp4') as temp_input_file:
-        try:
-            file.save(temp_input_file.name)
-            temp_input_file.flush()
-            print(f"File successfully saved at {temp_input_file.name}, size: {os.path.getsize(temp_input_file.name)} bytes", flush=True)
-        except Exception as e:
-            print(f"Error saving file: {e}", flush=True)
-            print(f"aaaaaaaaaaaaaaaaaaaaaaaa", flush=True)
-            return f"Error saving file: {e}", 500
+        file.save(temp_input_file.name)
+
         # Process the video with subtitles
         output_path = render_video(temp_input_file.name, subtitles)
     
@@ -47,6 +41,9 @@ def render_video(input_path, subtitles):
             f"drawtext=text='{s['text']}':x={s['x']}:y={s['y']}:fontsize={s['size']}:fontcolor={s['color']}:enable='between(t,{s['start']},{s['end']})':fontfile=fonts/Arial.ttf"
             for s in subtitles
         ])
+
+        print(f"File path: {input_path}", flush=True)
+        print(f"File size: {os.path.getsize(input_path)} bytes", flush=True)
 
         print("cccccccccccccccccccccccccccccccc", flush=True)
 

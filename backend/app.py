@@ -18,8 +18,6 @@ def save_subtitles():
     subtitles = request.form.get('subtitles')
     subtitles = json.loads(subtitles)
 
-    print(f"Received file: {file.filename}, size: {len(file.read())} bytes", flush=True)
-
     # Save the file to a temporary directory
     with tempfile.NamedTemporaryFile(delete=False, suffix='.mp4') as temp_input_file:
         try:

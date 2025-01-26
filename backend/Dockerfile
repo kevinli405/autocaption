@@ -1,8 +1,8 @@
-# Use a Python base image and install FFmpeg
-FROM python:3.9-slim
+# Use a base image that already has FFmpeg installed
+FROM jrottenberg/ffmpeg:5.0-alpine
 
-# Install FFmpeg and system dependencies
-RUN apt-get update && apt-get install -y ffmpeg && apt-get clean
+# Install Python and dependencies
+RUN apk add --no-cache python3 py3-pip
 
 # Set the working directory for your app
 WORKDIR /app
@@ -10,8 +10,8 @@ WORKDIR /app
 # Copy your application code into the container
 COPY . /app
 
-# Install the necessary Python packages
-RUN pip install --no-cache-dir -r requirements.txt
+# Install the necessary Python packages from requirements.txt
+RUN pip install -r requirements.txt
 
 # Expose the port your Flask app runs on (default is 5000)
 EXPOSE 8080

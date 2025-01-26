@@ -3,6 +3,7 @@ from flask_cors import CORS
 import subprocess
 import tempfile
 import json
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -17,10 +18,14 @@ def save_subtitles():
 
     # Save the file to a temporary directory
     with tempfile.NamedTemporaryFile(delete=False, suffix='.mp4') as temp_input_file:
+        
         file.save(temp_input_file.name)
 
         # Process the video with subtitles
         output_path = render_video(temp_input_file.name, subtitles)
+
+    app.logger.info(f"Output file exists after processing: {os.path.exists(output_path)}")
+    app.logger.info(f"Output file size: {os.path.getsize(output_path)} bytes")
 
     # Send the processed video back to the client
     return send_file(output_path, as_attachment=True, download_name="output.mp4")
@@ -45,4 +50,4 @@ def render_video(input_path, subtitles):
 if __name__ == "__main__":
     #app.run(debug=True)
     from waitress import serve
-    serve(app, host="0.0.0.0", port=8080)
+    serve(app, host="0.0.0.0", port=10000)

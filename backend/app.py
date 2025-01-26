@@ -20,7 +20,10 @@ def save_subtitles():
 
     # Save the file to a temporary directory
     with tempfile.NamedTemporaryFile(delete=False, suffix='.mp4', dir='/tmp') as temp_input_file:
-        file.save(temp_input_file.name)
+        #file.save(temp_input_file.name)
+        with open(temp_input_file.name, 'wb') as f:
+            f.write(file.read())
+            print(f"File manually written at {temp_input_file.name}", flush=True)
         print(f"File saved at {temp_input_file.name}, size: {os.path.getsize(temp_input_file.name)} bytes", flush=True)
         # Process the video with subtitles
         output_path = render_video(temp_input_file.name, subtitles)

@@ -26,7 +26,7 @@ const CustomVideoPlayer = ({ videoFile, setVideoDimensions, setCurrentTime, subt
   };
   
   useEffect(() => {
-    if (videoRef.current && currentTime !== null && subtitleTime) {
+    if (videoRef.current && currentTime !== null && subtitleTime !== null) {
       setCurrentTime(subtitleTime);
       playerRef.current.seekTo(subtitleTime);
     }

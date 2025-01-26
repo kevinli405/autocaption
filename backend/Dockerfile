@@ -10,8 +10,8 @@ WORKDIR /app
 # Copy your application code into the container
 COPY . /app
 
-# Install the necessary Python packages from requirements.txt
-RUN pip install -r requirements.txt
+# Install the necessary Python packages
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose the port your Flask app runs on (default is 5000)
 EXPOSE 8080

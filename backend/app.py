@@ -31,9 +31,6 @@ def save_subtitles():
 # Function to render video with subtitles using FFmpeg
 def render_video(input_path, subtitles):
 
-    print(f"File path: {input_path}", flush=True)
-    print(f"File size: {os.path.getsize(input_path)} bytes", flush=True)
-
     with tempfile.NamedTemporaryFile(delete=False, suffix='.mp4') as temp_output_file:
         drawtext_commands = ",".join([
             f"drawtext=text='{s['text']}':x={s['x']}:y={s['y']}:fontsize={s['size']}:fontcolor={s['color']}:enable='between(t,{s['start']},{s['end']})':fontfile=fonts/Arial.ttf"
@@ -47,7 +44,7 @@ def render_video(input_path, subtitles):
 
         # Run the FFmpeg command
         command = [
-            "ffmpeg", "-y", "-i", input_path, "-vf", "drawtext=text='Test':x=10:y=10:fontsize=24:fontcolor=white", "-preset", "veryfast", temp_output_file.name
+            "ffmpeg", "-y", "-i", input_path, "-vf", drawtext_commands, "-preset", "veryfast", temp_output_file.name
         ]
         #command = f"ffmpeg -i {input_path} -vf drawtext=text='Test':x=10:y=10:fontsize=24:fontcolor=white {temp_output_file.name}"
         subprocess.run(command)

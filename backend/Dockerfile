@@ -1,5 +1,5 @@
 # Use a base image that already has FFmpeg installed
-FROM jrottenberg/ffmpeg:4.1-alpine
+FROM jrottenberg/ffmpeg:5.0-alpine
 
 # Install Python and dependencies
 RUN apk add --no-cache python3 py3-pip

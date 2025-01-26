@@ -8,8 +8,6 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
-
 # Endpoint to upload video and save subtitle data
 @app.route('/save_subtitles', methods=['POST'])
 def save_subtitles():
@@ -51,6 +49,7 @@ def render_video(input_path, subtitles):
         command = [
             "ffmpeg", "-y", "-i", input_path, "-vf", drawtext_commands, temp_output_file.name
         ]
+        command = f"ffmpeg -i {input_path} -vf \"drawtext=text='Test':x=10:y=10:fontsize=24:fontcolor=white\" {temp_output_file.name}"
         subprocess.run(command)
 
         print(f"File path: {temp_output_file.name}", flush=True)

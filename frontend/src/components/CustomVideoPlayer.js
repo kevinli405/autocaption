@@ -4,7 +4,7 @@ import { IconButton, Slider } from '@mui/material';
 import { FaPlay, FaPause } from 'react-icons/fa';
 import './CustomVideoPlayer.css';
 
-const CustomVideoPlayer = ({ videoFile, setVideoDimensions, setCurrentTime }) => {
+const CustomVideoPlayer = ({ videoFile, setVideoDimensions, setCurrentTime, subtitleTime }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTimePlayer] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -24,6 +24,14 @@ const CustomVideoPlayer = ({ videoFile, setVideoDimensions, setCurrentTime }) =>
   const handleDuration = (duration) => {
     setDuration(duration);
   };
+  
+  useEffect(() => {
+    if (videoRef.current && currentTime !== null && subtitleTime) {
+      setCurrentTime(subtitleTime);
+      playerRef.current.seekTo(subtitleTime);
+    }
+  }, [subtitleTime]); 
+  
 
   const handleReady = () => {
     // On component mount, pass the position of the player to parent

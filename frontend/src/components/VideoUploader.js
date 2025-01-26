@@ -1,9 +1,8 @@
 import React, { useState, useRef } from "react";
 import Dropzone from "react-dropzone";
-import axios from "axios";
 import CustomVideoPlayer from './CustomVideoPlayer';
 
-const VideoUploader = ({ setVideoDimensions, setCurrentTime, setOriginalDimensions, setVideoFile }) => {
+const VideoUploader = ({ setVideoDimensions, setCurrentTime, setOriginalDimensions, setVideoFile, subtitleTime }) => {
   const [videoFileURL, setVideoFileURL] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -43,6 +42,7 @@ const VideoUploader = ({ setVideoDimensions, setCurrentTime, setOriginalDimensio
           videoFile={videoFileURL}
           setVideoDimensions={setVideoDimensions}
           setCurrentTime={setCurrentTime}
+          subtitleTime={subtitleTime}
         />  // Use the custom player here
       )}
 

@@ -1,0 +1,27 @@
+button:hover {
+background-color: #0056b3;
+}
+
+button:active {
+background-color: #003f8a;
+}
+
+.subtitle-list-item {
+cursor: pointer;
+padding: 10px;
+margin-bottom: 10px;
+background-color: #ffffff;
+border: 1px solid #ddd;
+border-radius: 8px;
+transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.subtitle-list-item:hover {
+transform: translateY(-3px);
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.subtitle-list-item.selected {
+background-color: #e0f7fa;
+border-color: #00838f;
+}

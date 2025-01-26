@@ -11,7 +11,7 @@ CORS(app)
 # Endpoint to upload video and save subtitle data
 @app.route('/save_subtitles', methods=['POST'])
 def save_subtitles():
-    print("aaaaaaaaaaaaaaaaa")
+    print("aaaaaaaaaaaaaaaaa", flush=True)
     # Get the video file from the request
     file = request.files['file']
     subtitles = request.form.get('subtitles')
@@ -20,12 +20,12 @@ def save_subtitles():
     # Save the file to a temporary directory
     with tempfile.NamedTemporaryFile(delete=False, suffix='.mp4') as temp_input_file:
         file.save(temp_input_file.name)
-        print("bbbbbbbbbbbbbbbbbbbbbb")
+        print("bbbbbbbbbbbbbbbbbbbbbb", flush=True)
 
         # Process the video with subtitles
         output_path = render_video(temp_input_file.name, subtitles)
     
-    print("dddddddddddddddddddddddddddddddddddddd")
+    print("dddddddddddddddddddddddddddddddddddddd", flush=True)
 
     # Send the processed video back to the client
     return send_file(output_path, as_attachment=True, download_name="output.mp4", mimetype="video/mp4")
@@ -39,7 +39,7 @@ def render_video(input_path, subtitles):
             for s in subtitles
         ])
 
-        print("cccccccccccccccccccccccccccccccc")
+        print("cccccccccccccccccccccccccccccccc", flush=True)
 
         # Run the FFmpeg command
         command = [
@@ -47,8 +47,9 @@ def render_video(input_path, subtitles):
         ]
         subprocess.run(command)
 
-        print(f"File path: {temp_output_file.name}")
-        print(f"File size: {os.path.getsize(temp_output_file.name)} bytes")
+        print(f"File path: {temp_output_file.name}", flush=True)
+        print(f"File size: {os.path.getsize(temp_output_file.name)} bytes", flush=True)
+        temp_output_file.flush()
 
         return temp_output_file.name
 

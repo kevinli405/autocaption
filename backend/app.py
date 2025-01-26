@@ -11,6 +11,7 @@ CORS(app)
 # Endpoint to upload video and save subtitle data
 @app.route('/save_subtitles', methods=['POST'])
 def save_subtitles():
+    print("aaaaaaaaaaaaaaaaa")
     # Get the video file from the request
     file = request.files['file']
     subtitles = request.form.get('subtitles')
@@ -19,9 +20,12 @@ def save_subtitles():
     # Save the file to a temporary directory
     with tempfile.NamedTemporaryFile(delete=False, suffix='.mp4') as temp_input_file:
         file.save(temp_input_file.name)
+        print("bbbbbbbbbbbbbbbbbbbbbb")
 
         # Process the video with subtitles
         output_path = render_video(temp_input_file.name, subtitles)
+    
+    print("dddddddddddddddddddddddddddddddddddddd")
 
     # Send the processed video back to the client
     return send_file(output_path, as_attachment=True, download_name="output.mp4", mimetype="video/mp4")
@@ -34,6 +38,8 @@ def render_video(input_path, subtitles):
             f"drawtext=text='{s['text']}':x={s['x']}:y={s['y']}:fontsize={s['size']}:fontcolor={s['color']}:enable='between(t,{s['start']},{s['end']})':fontfile=fonts/Arial.ttf"
             for s in subtitles
         ])
+
+        print("cccccccccccccccccccccccccccccccc")
 
         # Run the FFmpeg command
         command = [

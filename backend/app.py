@@ -18,17 +18,13 @@ def save_subtitles():
 
     # Save the file to a temporary directory
     with tempfile.NamedTemporaryFile(delete=False, suffix='.mp4') as temp_input_file:
-        
         file.save(temp_input_file.name)
 
         # Process the video with subtitles
         output_path = render_video(temp_input_file.name, subtitles)
 
-    app.logger.info(f"Output file exists after processing: {os.path.exists(output_path)}")
-    app.logger.info(f"Output file size: {os.path.getsize(output_path)} bytes")
-
     # Send the processed video back to the client
-    return send_file(output_path, as_attachment=True, download_name="output.mp4")
+    return send_file(output_path, as_attachment=True, download_name="output.mp4", mimetype="video/mp4")
 
 # Function to render video with subtitles using FFmpeg
 def render_video(input_path, subtitles):
@@ -45,9 +41,12 @@ def render_video(input_path, subtitles):
         ]
         subprocess.run(command)
 
+        print(f"File path: {temp_output_file.name}")
+        print(f"File size: {os.path.getsize(temp_output_file.name)} bytes")
+
         return temp_output_file.name
 
 if __name__ == "__main__":
     #app.run(debug=True)
     from waitress import serve
-    serve(app, host="0.0.0.0", port=10000)
+    serve(app, host="0.0.0.0", port=8080)
